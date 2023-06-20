@@ -1,6 +1,7 @@
+from random import randint
 from typing import Union
 
-from helpers import random, get_random_location
+from apple import Apple
 from variables import (
     CELL_HEIGHT,
     CELL_WIDTH,
@@ -16,64 +17,64 @@ class Worm:
 
     def __init__(self):
         # Set a random start point
-        start_x = random.randint(5, CELL_WIDTH - 6)
-        start_y = random.randint(5, CELL_HEIGHT - 6)
-        self.worm_coords = [
+        start_x = randint(5, CELL_WIDTH - 6)
+        start_y = randint(5, CELL_HEIGHT - 6)
+        self.coords = [
             {'x': start_x, 'y': start_y},
             {'x': start_x - 1, 'y': start_y},
             {'x': start_x - 2, 'y': start_y}
         ]
 
-    def get_coords(self, direction: str, apple: dict) -> Union[list, None]:
+    def get_coords(self, direction: str, apple_: Apple) -> Union[list, None]:
         if (
-                self.worm_coords[self.HEAD_IDX]['x'] == -1 or
-                self.worm_coords[self.HEAD_IDX]['x'] == CELL_WIDTH or
-                self.worm_coords[self.HEAD_IDX]['y'] == -1 or
-                self.worm_coords[self.HEAD_IDX]['y'] == CELL_HEIGHT
+                self.coords[self.HEAD_IDX]['x'] == -1 or
+                self.coords[self.HEAD_IDX]['x'] == CELL_WIDTH or
+                self.coords[self.HEAD_IDX]['y'] == -1 or
+                self.coords[self.HEAD_IDX]['y'] == CELL_HEIGHT
         ):
             return
-        for worm_body in self.worm_coords[1:]:
+        for worm_body in self.coords[1:]:
             if (
-                    worm_body['x'] == self.worm_coords[self.HEAD_IDX]['x'] and
-                    worm_body['y'] == self.worm_coords[self.HEAD_IDX]['y']
+                    worm_body['x'] == self.coords[self.HEAD_IDX]['x'] and
+                    worm_body['y'] == self.coords[self.HEAD_IDX]['y']
             ):
                 return
 
-        # check if worm has eaten an apple
+        # check if worm has eaten an apple_
         if (
-                self.worm_coords[self.HEAD_IDX]['x'] == apple['x'] and
-                self.worm_coords[self.HEAD_IDX]['y'] == apple['y']
+                self.coords[self.HEAD_IDX]['x'] == apple_.coords['x'] and
+                self.coords[self.HEAD_IDX]['y'] == apple_.coords['y']
         ):
             # don't remove worm's tail segment
-            # set a new apple somewhere
-            apple = get_random_location(CELL_WIDTH, CELL_HEIGHT)
+            # set a new apple_ somewhere
+            apple_.set_random_location()
         else:
             # remove worm's tail segment
-            del self.worm_coords[-1]
+            del self.coords[-1]
 
         # move the worm by adding a segment in the direction it is moving
         new_head = {}
         if direction == UP:
             new_head = {
-                'x': self.worm_coords[self.HEAD_IDX]['x'],
-                'y': self.worm_coords[self.HEAD_IDX]['y'] - 1
+                'x': self.coords[self.HEAD_IDX]['x'],
+                'y': self.coords[self.HEAD_IDX]['y'] - 1
             }
         elif direction == DOWN:
             new_head = {
-                'x': self.worm_coords[self.HEAD_IDX]['x'],
-                'y': self.worm_coords[self.HEAD_IDX]['y'] + 1
+                'x': self.coords[self.HEAD_IDX]['x'],
+                'y': self.coords[self.HEAD_IDX]['y'] + 1
             }
         elif direction == LEFT:
             new_head = {
-                'x': self.worm_coords[self.HEAD_IDX]['x'] - 1,
-                'y': self.worm_coords[self.HEAD_IDX]['y']
+                'x': self.coords[self.HEAD_IDX]['x'] - 1,
+                'y': self.coords[self.HEAD_IDX]['y']
             }
         elif direction == RIGHT:
             new_head = {
-                'x': self.worm_coords[self.HEAD_IDX]['x'] + 1,
-                'y': self.worm_coords[self.HEAD_IDX]['y']
+                'x': self.coords[self.HEAD_IDX]['x'] + 1,
+                'y': self.coords[self.HEAD_IDX]['y']
             }
 
-        self.worm_coords.insert(0, new_head)
+        self.coords.insert(0, new_head)
 
-        return self.worm_coords
+        return self.coords

@@ -1,4 +1,5 @@
 import pygame
+from apple import Apple
 
 # R    G    B
 WHITE = (255, 255, 255)
@@ -31,9 +32,9 @@ class Draw:
             worm_inner_segment_rect = pygame.Rect(x + 4, y + 4, cell_size - 8, cell_size - 8)
             pygame.draw.rect(self.display_surf, GREEN, worm_inner_segment_rect)
 
-    def draw_apple(self, coord: dict, cell_size: int):
-        x = coord['x'] * cell_size
-        y = coord['y'] * cell_size
+    def draw_apple(self, apple_: Apple, cell_size: int):
+        x = apple_.coords['x'] * cell_size
+        y = apple_.coords['y'] * cell_size
         apple_rect = pygame.Rect(x, y, cell_size, cell_size)
         pygame.draw.rect(self.display_surf, RED, apple_rect)
 

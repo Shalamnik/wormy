@@ -13,6 +13,7 @@ from pygame.locals import (
     K_a, K_w, K_s, K_d
 )
 
+from apple import Apple
 from draw import (
     Draw,
     BG_COLOR,
@@ -20,12 +21,9 @@ from draw import (
     DARK_GREEN,
     GREEN
 )
-from helpers import get_random_location
 from variables import (
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    CELL_WIDTH,
-    CELL_HEIGHT,
     CELL_SIZE,
     FPS,
     UP,
@@ -36,7 +34,7 @@ from variables import (
 from worm import Worm
 
 
-class GameRunner:
+class Game:
     def __init__(self):
         pygame.init()
         self.FPS_CLOCK = pygame.time.Clock()
@@ -54,7 +52,7 @@ class GameRunner:
     def run_game(self):
         direction = RIGHT
 
-        apple = get_random_location(CELL_WIDTH, CELL_HEIGHT)
+        _apple = Apple()
         _worm = Worm()
 
         while True:
@@ -73,13 +71,15 @@ class GameRunner:
                     elif event.key == K_ESCAPE:
                         self.terminate()
 
-            worm_coords = _worm.get_coords(direction, apple)
+            worm_coords = _worm.get_coords(direction, _apple)
+            if not worm_coords:
+                self.terminate()
 
             self.DISPLAY_SURF.fill(BG_COLOR)
 
             self.draw.draw_grid(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
             self.draw.draw_worm(worm_coords, CELL_SIZE)
-            self.draw.draw_apple(apple, CELL_SIZE)
+            self.draw.draw_apple(_apple, CELL_SIZE)
             self.draw.draw_score(len(worm_coords) - 3, WINDOW_WIDTH)
 
             pygame.display.update()

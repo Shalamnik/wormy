@@ -1,6 +1,6 @@
-from game_runner import GameRunner
+from game import Game
 
 
 if __name__ == '__main__':
-    runner = GameRunner()
-    runner.run()
+    game = Game()
+    game.run()
