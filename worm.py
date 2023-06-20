@@ -1,7 +1,14 @@
-from helpers import random
-from game_runner import *
-
 from typing import Union
+
+from helpers import random, get_random_location
+from variables import (
+    CELL_HEIGHT,
+    CELL_WIDTH,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+)
 
 
 class Worm:

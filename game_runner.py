@@ -13,32 +13,27 @@ from pygame.locals import (
     K_a, K_w, K_s, K_d
 )
 
-from draw import Draw
-from worm import Worm
+from draw import (
+    Draw,
+    BG_COLOR,
+    WHITE,
+    DARK_GREEN,
+    GREEN
+)
 from helpers import get_random_location
-
-FPS = 10
-WINDOW_WIDTH = 640
-WINDOW_HEIGHT = 480
-CELL_SIZE = 20
-assert WINDOW_WIDTH % CELL_SIZE == 0, "Window width must be a multiple of cell size."
-assert WINDOW_HEIGHT % CELL_SIZE == 0, "Window height must be a multiple of cell size."
-CELL_WIDTH = int(WINDOW_WIDTH / CELL_SIZE)
-CELL_HEIGHT = int(WINDOW_HEIGHT / CELL_SIZE)
-
-# R    G    B
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-DARK_GREEN = (0, 155, 0)
-DARK_GRAY = (40, 40, 40)
-BG_COLOR = BLACK
-
-UP = 'up'
-DOWN = 'down'
-LEFT = 'left'
-RIGHT = 'right'
+from variables import (
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
+    CELL_WIDTH,
+    CELL_HEIGHT,
+    CELL_SIZE,
+    FPS,
+    UP,
+    DOWN,
+    RIGHT,
+    LEFT
+)
+from worm import Worm
 
 
 class GameRunner:
@@ -82,10 +77,10 @@ class GameRunner:
 
             self.DISPLAY_SURF.fill(BG_COLOR)
 
-            self.draw.drawGrid()
-            self.draw.drawWorm(worm_coords)
-            self.draw.drawApple(apple)
-            self.draw.drawScore(len(worm_coords) - 3)
+            self.draw.draw_grid(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
+            self.draw.draw_worm(worm_coords, CELL_SIZE)
+            self.draw.draw_apple(apple, CELL_SIZE)
+            self.draw.draw_score(len(worm_coords) - 3, WINDOW_WIDTH)
 
             pygame.display.update()
 
@@ -121,7 +116,7 @@ class GameRunner:
             rotated_rect2.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
             self.DISPLAY_SURF.blit(rotated_surf2, rotated_rect2)
 
-            self.draw.drawPressKeyMsg()
+            self.draw.draw_press_key_msg(WINDOW_WIDTH, WINDOW_HEIGHT)
 
             if self.is_key_pressed():
                 pygame.event.get()
@@ -151,7 +146,7 @@ class GameRunner:
         self.DISPLAY_SURF.blit(game_surf, game_rect)
         self.DISPLAY_SURF.blit(over_surf, over_rect)
 
-        self.draw.drawPressKeyMsg()
+        self.draw.draw_press_key_msg(WINDOW_WIDTH, WINDOW_HEIGHT)
         pygame.display.update()
         pygame.time.wait(500)
 
