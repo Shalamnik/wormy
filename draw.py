@@ -1,5 +1,6 @@
 import pygame
 from apple import Apple
+import sys
 
 # R    G    B
 WHITE = (255, 255, 255)
@@ -56,7 +57,7 @@ class Draw:
             window_width: int,
             window_height: int
     ):
-        press_key_surf = self.basic_font.render('Press a key to play.', True, DARK_GRAY)
+        press_key_surf = self.basic_font.render('Press a key to play', True, WHITE)
         press_key_rect = press_key_surf.get_rect()
         press_key_rect.topleft = (window_width - 200, window_height - 30)
         self.display_surf.blit(press_key_surf, press_key_rect)
