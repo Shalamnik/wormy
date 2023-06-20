@@ -1,5 +1,7 @@
 import sys
 
+from random import choice
+
 import pygame
 from pygame.locals import (
     K_UP,
@@ -50,7 +52,7 @@ class Game:
             self.show_game_over_screen()
 
     def run_game(self):
-        direction = RIGHT
+        direction = choice([UP, DOWN, LEFT, RIGHT])
 
         _apple = Apple()
         _worm = Worm()
@@ -73,7 +75,7 @@ class Game:
 
             worm_coords = _worm.get_coords(direction, _apple)
             if not worm_coords:
-                self.terminate()
+                return
 
             self.DISPLAY_SURF.fill(BG_COLOR)
 
