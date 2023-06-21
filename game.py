@@ -34,6 +34,7 @@ from variables import (
     LEFT
 )
 from worm import Worm
+from db_worker import DBWorker
 
 
 class Game:
@@ -46,6 +47,8 @@ class Game:
         pygame.display.set_caption('Wormy')
 
         self.user_name = ''
+        self.user_score = 0
+        self.db_worker = DBWorker()
 
     def run(self):
         self.show_start_screen()
@@ -53,6 +56,8 @@ class Game:
         while True:
             self.run_game()
             self.show_game_over_screen()
+            self.db_worker.record_user_score(self.user_name, self.user_score)
+            self.show_result()
 
     def run_game(self):
         direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -80,12 +85,15 @@ class Game:
             if not worm_coords:
                 return
 
+            user_score = len(worm_coords) - 3
+            self.user_score = user_score
+
             self.DISPLAY_SURF.fill(BG_COLOR)
 
             self.draw.draw_grid(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
             self.draw.draw_worm(worm_coords, CELL_SIZE)
             self.draw.draw_apple(_apple, CELL_SIZE)
-            self.draw.draw_score(len(worm_coords) - 3, WINDOW_WIDTH)
+            self.draw.draw_score(user_score, WINDOW_WIDTH)
 
             pygame.display.update()
 
@@ -230,6 +238,26 @@ class Game:
         self.draw.draw_press_key_msg(WINDOW_WIDTH, WINDOW_HEIGHT)
         pygame.display.update()
         pygame.time.wait(500)
+
+        self.is_key_pressed()
+
+        while True:
+            if self.is_key_pressed():
+                pygame.event.get()
+                return
+
+    def show_result(self):
+        top_user_scores = self.db_worker.get_top_users()
+
+        score_surf = self.BASIC_FONT.render(
+            f'{self.user_name}, your score: {self.user_score}',
+            True,
+            WHITE
+        )
+        score_rect = score_surf.get_rect()
+        score_rect.midtop = (WINDOW_WIDTH - 20, 10)
+        self.DISPLAY_SURF.blit(score_surf, score_rect)
+        pygame.display.update()
 
         self.is_key_pressed()
 
