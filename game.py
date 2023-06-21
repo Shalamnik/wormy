@@ -1,6 +1,7 @@
 import sys
 
 from random import choice
+from time import time
 
 import pygame
 from pygame.locals import (
@@ -31,7 +32,9 @@ from variables import (
     UP,
     DOWN,
     RIGHT,
-    LEFT
+    LEFT,
+    GAME_TIME,
+    WIN_SCORE,
 )
 from worm import Worm
 from db_worker import DBWorker
@@ -56,7 +59,7 @@ class Game:
         while True:
             self.run_game()
             self.db_worker.record_user_score(self.user_name, self.user_score)
-            self.show_game_over_screen()
+            self.show_finish_screen()
 
     def run_game(self):
         direction = choice([UP, DOWN, LEFT, RIGHT])
@@ -64,7 +67,13 @@ class Game:
         _apple = Apple()
         _worm = Worm()
 
+        start_time = time()
+
         while True:
+            time_left = time() - start_time
+            if time_left > GAME_TIME:
+                return
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.terminate()
@@ -93,6 +102,8 @@ class Game:
             self.draw.draw_worm(worm_coords, CELL_SIZE)
             self.draw.draw_apple(_apple, CELL_SIZE)
             self.draw.draw_score(user_score, WINDOW_WIDTH)
+            self.draw.draw_timer(time_left, WINDOW_WIDTH)
+            self.draw.draw_game_rules(WINDOW_WIDTH)
 
             pygame.display.update()
 
@@ -190,19 +201,13 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    def show_game_over_screen(self):
+    def show_finish_screen(self):
         self.DISPLAY_SURF.fill(BG_COLOR)
 
-        game_over_font = pygame.font.Font('freesansbold.ttf', 60)
-        game_surf = game_over_font.render('Game', True, WHITE)
-        over_surf = game_over_font.render('Over', True, WHITE)
-        game_rect = game_surf.get_rect()
-        over_rect = over_surf.get_rect()
-        game_rect.midtop = (WINDOW_WIDTH / 2, 10)
-        over_rect.midtop = (WINDOW_WIDTH / 2, game_rect.height + 10 + 25)
-
-        self.DISPLAY_SURF.blit(game_surf, game_rect)
-        self.DISPLAY_SURF.blit(over_surf, over_rect)
+        if self.user_score >= WIN_SCORE:
+            self.show_win_screen()
+        else:
+            self.show_game_over_screen()
 
         self.show_user_scores()
 
@@ -216,6 +221,30 @@ class Game:
             if self.is_key_pressed():
                 pygame.event.get()
                 return
+
+    def show_win_screen(self):
+        font = pygame.font.Font('freesansbold.ttf', 60)
+        you_surf = font.render('You', True, WHITE)
+        win_surf = font.render('Won!', True, WHITE)
+        you_rect = you_surf.get_rect()
+        win_rect = win_surf.get_rect()
+        you_rect.midtop = (WINDOW_WIDTH / 2, 10)
+        win_rect.midtop = (WINDOW_WIDTH / 2, you_rect.height + 10 + 25)
+
+        self.DISPLAY_SURF.blit(you_surf, you_rect)
+        self.DISPLAY_SURF.blit(win_surf, win_rect)
+
+    def show_game_over_screen(self):
+        font = pygame.font.Font('freesansbold.ttf', 60)
+        game_surf = font.render('Game', True, WHITE)
+        over_surf = font.render('Over', True, WHITE)
+        game_rect = game_surf.get_rect()
+        over_rect = over_surf.get_rect()
+        game_rect.midtop = (WINDOW_WIDTH / 2, 10)
+        over_rect.midtop = (WINDOW_WIDTH / 2, game_rect.height + 10 + 25)
+
+        self.DISPLAY_SURF.blit(game_surf, game_rect)
+        self.DISPLAY_SURF.blit(over_surf, over_rect)
 
     def show_user_scores(self):
         margin_top = 20

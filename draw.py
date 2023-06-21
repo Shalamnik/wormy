@@ -1,6 +1,7 @@
 import pygame
 from apple import Apple
-import sys
+
+from variables import WIN_SCORE
 
 # R    G    B
 WHITE = (255, 255, 255)
@@ -22,6 +23,18 @@ class Draw:
         score_surf = self.basic_font.render(f'Score: {score}', True, WHITE)
         score_rect = score_surf.get_rect()
         score_rect.topleft = (window_width - 120, 10)
+        self.display_surf.blit(score_surf, score_rect)
+
+    def draw_timer(self, secs: float, window_width: int):
+        score_surf = self.basic_font.render(f'Time: {int(secs)}', True, WHITE)
+        score_rect = score_surf.get_rect()
+        score_rect.topleft = (window_width - 120, 40)
+        self.display_surf.blit(score_surf, score_rect)
+
+    def draw_game_rules(self, window_width: int):
+        score_surf = self.basic_font.render(f'Eat >= {WIN_SCORE} apple(s) to Win', True, WHITE)
+        score_rect = score_surf.get_rect()
+        score_rect.midtop = (window_width / 2, 20)
         self.display_surf.blit(score_surf, score_rect)
 
     def draw_worm(self, worm_coords, cell_size: int):
