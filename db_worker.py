@@ -18,20 +18,29 @@ class DBWorker:
     def record_user_score(user_name: str, score: int):
         with SQLiteConnector() as cur:
             top_score = cur.execute(
-                'SELECT name, top_score FROM users WHERE name = ?',
+                'SELECT top_score FROM users WHERE name = ?',
                 (user_name,)
             ).fetchone()
-            if top_score and top_score < score:
-                result = cur.execute(
+            if top_score and top_score[0] < score:
+                cur.execute(
                     'UPDATE users SET top_score = ? WHERE name = ?',
                     (score, user_name)
                 )
             elif not top_score:
-                result = cur.execute(
+                cur.execute(
                     'INSERT INTO users (name, top_score) VALUES (?, ?)',
                     (user_name, score)
                 )
-            return result
+
+    @staticmethod
+    def get_top_result(user_name: str):
+        with SQLiteConnector() as cur:
+            top_score = cur.execute(
+                'SELECT top_score FROM users WHERE name = ?',
+                (user_name,)
+            ).fetchone()
+            if top_score:
+                return top_score[0]
 
     @staticmethod
     def init_table():

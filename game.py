@@ -218,18 +218,22 @@ class Game:
                 return
 
     def show_user_scores(self):
+        margin_top = 20
 
         user_score = f'{self.user_name}, your score: {self.user_score}'
+        user_top_result = self.db_worker.get_top_result(self.user_name)
+        user_top_result = f'Your top result: {user_top_result}'
+
         top_header = f'Top 5 users:'
         top_user_scores = self.db_worker.get_top_users()
-        # top_user_scores = [{'name': '1', 'score': 1}, {'name': '2', 'score': 2},
-        #                    {'name': '3', 'score': 3}, {'name': '4', 'score': 4},
-        #                    {'name': '5', 'score': 5}]
 
-        self.render_center_text(user_score)
-        self.render_center_text(top_header, 40)
+        self.render_center_text(user_score, margin_top)
+        margin_top += 20
+        self.render_center_text(user_top_result, margin_top)
+        margin_top += 40
+        self.render_center_text(top_header, margin_top)
+        margin_top += 20
 
-        margin_top = 60
         for user in top_user_scores:
             self.render_center_text(f"{user['name']}: {user['score']}", margin_top)
             margin_top += 20

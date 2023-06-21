@@ -9,7 +9,8 @@ class SQLiteConnector:
         self.conn = sqlite3.connect(self.file)
         return self.conn.cursor()
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _type, value, _traceback):
         if value:
             raise KeyError(value)
+        self.conn.commit()
         self.conn.close()
