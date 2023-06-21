@@ -1,5 +1,4 @@
 import sys
-
 from random import choice
 from time import time
 
@@ -17,6 +16,7 @@ from pygame.locals import (
 )
 
 from apple import Apple
+from db_worker import DBWorker
 from draw import (
     Draw,
     BG_COLOR,
@@ -27,7 +27,6 @@ from draw import (
 from variables import (
     WINDOW_WIDTH,
     WINDOW_HEIGHT,
-    CELL_SIZE,
     FPS,
     UP,
     DOWN,
@@ -37,7 +36,6 @@ from variables import (
     WIN_SCORE,
 )
 from worm import Worm
-from db_worker import DBWorker
 
 
 class Game:
@@ -98,12 +96,12 @@ class Game:
 
             self.DISPLAY_SURF.fill(BG_COLOR)
 
-            self.draw.draw_grid(WINDOW_WIDTH, WINDOW_HEIGHT, CELL_SIZE)
-            self.draw.draw_worm(worm_coords, CELL_SIZE)
-            self.draw.draw_apple(_apple, CELL_SIZE)
-            self.draw.draw_score(user_score, WINDOW_WIDTH)
-            self.draw.draw_timer(time_left, WINDOW_WIDTH)
-            self.draw.draw_game_rules(WINDOW_WIDTH)
+            self.draw.draw_grid()
+            self.draw.draw_worm(worm_coords)
+            self.draw.draw_apple(_apple)
+            self.draw.draw_score(user_score)
+            self.draw.draw_timer(time_left)
+            self.draw.draw_game_rules()
 
             pygame.display.update()
 
@@ -139,7 +137,7 @@ class Game:
             rotated_rect2.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
             self.DISPLAY_SURF.blit(rotated_surf2, rotated_rect2)
 
-            self.draw.draw_press_key_msg(WINDOW_WIDTH, WINDOW_HEIGHT)
+            self.draw.draw_press_key_msg()
 
             if self.is_key_pressed():
                 pygame.event.get()
@@ -183,18 +181,15 @@ class Game:
             text_surface = self.BASIC_FONT.render(user_text, True, WHITE)
             text_hint = self.BASIC_FONT.render('Input your name:', True, WHITE)
 
+            self.draw.draw_game_rules()
+            self.draw.draw_press_enter_start()
             # render at position stated in arguments
             self.DISPLAY_SURF.blit(text_surface, (input_rect.x + 5, input_rect.y + 35))
-            self.DISPLAY_SURF.blit(text_hint, (input_rect.x + 5, input_rect.y + 5))
+            self.DISPLAY_SURF.blit(text_hint, (input_rect.x + 20, input_rect.y + 5))
 
-            # set width of textfield so that text cannot get
-            # outside of user's text input
-            input_rect.w = max(100, text_surface.get_width() + 10)
-
-            # display.flip() will update only a portion of the
-            # screen to updated, not full area
             pygame.display.flip()
-            self.FPS_CLOCK.tick(60)
+
+            self.FPS_CLOCK.tick(FPS)
 
     @staticmethod
     def terminate():
@@ -211,7 +206,7 @@ class Game:
 
         self.show_user_scores()
 
-        self.draw.draw_press_key_msg(WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.draw.draw_press_key_msg()
         pygame.display.update()
         pygame.time.wait(500)
 
